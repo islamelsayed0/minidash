@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Final gate before anything leaves the machine.
+set -uo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+echo "pre-push: scanning working tree and full history"
+if ! "$REPO_ROOT/scripts/scan-secrets.sh" all; then
+  echo
+  echo "PUSH BLOCKED."
+  exit 1
+fi
+exit 0

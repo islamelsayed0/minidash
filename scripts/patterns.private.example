@@ -1,0 +1,20 @@
+# Private scanner patterns. Copy to scripts/patterns.private and fill in.
+#
+#   cp scripts/patterns.private.example scripts/patterns.private
+#
+# patterns.private is gitignored and must stay that way. It holds the literal strings
+# that must never be published, which is exactly why it cannot be a tracked file: a
+# tracked pattern list puts every secret it protects into the permanent history of the
+# repo it is protecting.
+#
+# Format matches the PATTERNS array in scan-secrets.sh: one "label|regex" per line.
+# The regex is PCRE, passed to grep -P. Escape backslashes once, not twice — this file
+# is read as plain text, not as bash source.
+#
+# Blank lines and lines starting with # are ignored.
+
+# Business name (must never appear)|(?i)\b<BUSINESS_NAME>\b
+# Internal bot name (say 'Telegram alerts')|(?i)<BOT_NAME>
+# Personal phone number|\b<AREA>[.\ -]?<PREFIX>[.\ -]?<LINE>\b
+# Employer name|(?i)\b<EMPLOYER>\b
+# Real first and last name of anyone but the author|(?i)\b<FIRST> <LAST>\b

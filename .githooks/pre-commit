@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Blocks a commit if staged content contains anything that must not be public.
+# Installed by scripts/setup.sh via core.hooksPath.
+
+set -uo pipefail
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+if [ ! -x "$REPO_ROOT/scripts/scan-secrets.sh" ]; then
+  echo "pre-commit: scanner missing or not executable. Run scripts/setup.sh"
+  exit 1
+fi
+
+echo "pre-commit: scanning staged content"
+if ! "$REPO_ROOT/scripts/scan-secrets.sh" staged; then
+  echo
+  echo "COMMIT BLOCKED. Fix the findings above."
+  echo "This repo is written to be published. Nothing sensitive should ever enter its history."
+  exit 1
+fi
+exit 0
