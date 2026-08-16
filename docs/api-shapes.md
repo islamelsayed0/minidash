@@ -52,7 +52,7 @@ Raw `who -a` / netstat lines; includes noise rows (`system boot`,
 ### `/tailnet` — array
 ```json
 {
-  "hostname": "Islam’s MacBook Pro",
+  "hostname": "<DEVICE_NAME>",
   "ts_ip": "<PEER_HOST>",
   "os": "macOS" | "linux" | "windows",
   "online": 1 | 0,
@@ -101,7 +101,7 @@ Raw `who -a` / netstat lines; includes noise rows (`system boot`,
 
 ### `/backup-status`
 ```json
-{"status": "SUCCESS", "time": "2026-07-06T08:03:30-04:00", "snapshot": "40c40524"}
+{"status": "SUCCESS", "time": "2026-07-06T08:03:30-04:00", "snapshot": "0a1b2c3d"}
 ```
 
 ### `/updates`
@@ -113,11 +113,11 @@ Raw `who -a` / netstat lines; includes noise rows (`system boot`,
 ## Netdata — `http://127.0.0.1:19999/api/v1`
 
 **CRITICAL LIMITATION:** `system.cpu` and `system.ram` DO NOT EXIST on this
-box — the mach SMI collector is deliberately disabled (netdata 2.10.3 crashes
-on this M4 without that workaround; see ~/services/README.md). Available
+box — the mach SMI collector is deliberately disabled, because on this
+platform Netdata crashes without that workaround. Available
 system charts: `system.load`, `system.uptime`, `system.io`, `system.ipv4`,
 `system.idlejitter`, `mem.swap`, `disk_space./` (+ per-volume, incl.
-`disk_space./Volumes/Restic-Repo`, `disk_space./Volumes/TM-Backup 1`),
+`disk_space./Volumes/<BACKUP_VOLUME>`, `disk_space./Volumes/<ARCHIVE_VOLUME>`),
 `net.<iface>`, `disk_util.<disk>`, per-process `app.<name>_cpu_utilization` /
 `app.<name>_mem_usage`.
 
@@ -133,7 +133,7 @@ Historical series: `&points=90&after=-3600` for sparklines.
 
 No anonymous read path today: no status page configured
 (`/api/status-page/list` → "Status Page Not Found"), `/metrics` requires
-auth. Monitors existing: Netdata (1), Open Claw gateway (2), Homepage (3).
+auth. Monitors existing: `<SERVICE_A>` (1), `<SERVICE_B>` (2), `<SERVICE_C>` (3).
 
 **v1 plan:** create a Kuma status page (additive, does not modify existing
 monitors); its public heartbeat endpoint

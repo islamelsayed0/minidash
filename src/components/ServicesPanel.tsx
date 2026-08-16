@@ -16,7 +16,7 @@ const DISPLAY_NAME: Record<string, string> = {
   deadman: "Dead man switch",
   "update-check": "Update check",
   netdata: "Netdata",
-  gateway: "Open Claw",
+  gateway: "Gateway",
 };
 
 function displayName(label: string): string {
