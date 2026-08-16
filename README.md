@@ -31,10 +31,10 @@ Open `http://localhost:3000`.
 
 ## Configuration
 
-Infrastructure addresses and the launchd label prefix are read from the environment, never
-committed. A real host address in source is published the moment the repo is, and stays in
-history after it is edited out. Defaults are loopback, so a fresh clone runs without
-pointing at anyone's machine.
+Infrastructure addresses, volume labels, and the launchd label prefix are read from the
+environment, never committed. A real host address in source is published the moment the
+repo is, and stays in history after it is edited out. Defaults are loopback, so a fresh
+clone runs without pointing at anyone's machine.
 
 | Variable | Purpose | Default |
 | --- | --- | --- |
@@ -42,6 +42,11 @@ pointing at anyone's machine.
 | `NETDATA_BASE` | Netdata origin | `http://127.0.0.1:19999` |
 | `NEXT_PUBLIC_HOMEPAGE_URL` | Target of the header's Homepage link | `http://127.0.0.1:3010` |
 | `SERVICE_PREFIX` | Launchd label prefix for the locally managed jobs | `com.example` |
+| `NEXT_PUBLIC_BACKUP_VOLUME` | Label of the backup volume to chart, as it appears under `/Volumes` | unset — tile hidden |
+| `NEXT_PUBLIC_ARCHIVE_VOLUME` | Label of the archive volume to chart, as it appears under `/Volumes` | unset — tile hidden |
+
+The two volume variables are optional. Left unset, the dashboard simply does not render
+those tiles, which is what should happen on a machine that has no such volume attached.
 
 Set them in a local env file, which git ignores.
 

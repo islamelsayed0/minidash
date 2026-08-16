@@ -3,8 +3,13 @@
 import { usePolling } from "./usePolling";
 import type { NetdataSeries } from "./types";
 
-export function useNetdata(chart: string, points: number, after: number, intervalMs: number) {
-  const url = `/api/netdata?chart=${encodeURIComponent(chart)}&points=${points}&after=${after}`;
+// A null chart means the caller has nothing configured to read, and polling is
+// skipped entirely rather than requesting a chart that does not exist.
+export function useNetdata(chart: string | null, points: number, after: number, intervalMs: number) {
+  const url =
+    chart === null
+      ? null
+      : `/api/netdata?chart=${encodeURIComponent(chart)}&points=${points}&after=${after}`;
   return usePolling<NetdataSeries>(url, intervalMs);
 }
 

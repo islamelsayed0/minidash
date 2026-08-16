@@ -5,6 +5,17 @@ import { TimeSeriesChart, type Point } from "./TimeSeriesChart";
 import { Sparkline } from "./Sparkline";
 import { DiskUsage } from "./DiskUsage";
 
+// Volume labels are host-specific the same way the infrastructure addresses are, so
+// they come from the environment rather than from source. Unset means the tile is not
+// rendered at all, which is the right behaviour for a clone on a machine that has no
+// such volume attached.
+const BACKUP_VOLUME = process.env.NEXT_PUBLIC_BACKUP_VOLUME;
+const ARCHIVE_VOLUME = process.env.NEXT_PUBLIC_ARCHIVE_VOLUME;
+
+function volumeChart(label: string | undefined): string | null {
+  return label ? `disk_space./Volumes/${label}` : null;
+}
+
 function stamp(d: Date | null): string {
   if (!d) return "—";
   return `updated ${d.toLocaleTimeString("en-US", { hour12: false })}`;
@@ -14,8 +25,8 @@ export function SystemPanel({ loadPoints, loadUpdatedAt }: { loadPoints: Point[]
   const swap = useNetdata("mem.swap", 20, -1200, 30_000);
   const net = useNetdata("net.en0", 20, -1200, 30_000);
   const diskRoot = useNetdata("disk_space./", 1, -10, 60_000);
-  const diskRestic = useNetdata("disk_space./Volumes/Restic-Repo", 1, -10, 60_000);
-  const diskTM = useNetdata("disk_space./Volumes/TM-Backup 1", 1, -10, 60_000);
+  const diskBackup = useNetdata(volumeChart(BACKUP_VOLUME), 1, -10, 60_000);
+  const diskArchive = useNetdata(volumeChart(ARCHIVE_VOLUME), 1, -10, 60_000);
 
   const swapUsedPoints = seriesToPoints(swap.data, "used");
   const swapUsedNow = latestValue(swap.data, "used");
@@ -28,16 +39,18 @@ export function SystemPanel({ loadPoints, loadUpdatedAt }: { loadPoints: Point[]
       usedGiB: latestValue(diskRoot.data, "used") ?? 0,
       availGiB: latestValue(diskRoot.data, "avail") ?? 0,
     },
-    diskRestic.data && {
-      name: "Restic-Repo",
-      usedGiB: latestValue(diskRestic.data, "used") ?? 0,
-      availGiB: latestValue(diskRestic.data, "avail") ?? 0,
-    },
-    diskTM.data && {
-      name: "TM-Backup",
-      usedGiB: latestValue(diskTM.data, "used") ?? 0,
-      availGiB: latestValue(diskTM.data, "avail") ?? 0,
-    },
+    diskBackup.data &&
+      BACKUP_VOLUME && {
+        name: BACKUP_VOLUME,
+        usedGiB: latestValue(diskBackup.data, "used") ?? 0,
+        availGiB: latestValue(diskBackup.data, "avail") ?? 0,
+      },
+    diskArchive.data &&
+      ARCHIVE_VOLUME && {
+        name: ARCHIVE_VOLUME,
+        usedGiB: latestValue(diskArchive.data, "used") ?? 0,
+        availGiB: latestValue(diskArchive.data, "avail") ?? 0,
+      },
   ].filter((v): v is { name: string; usedGiB: number; availGiB: number } => Boolean(v));
 
   return (
